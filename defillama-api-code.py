@@ -18,8 +18,10 @@ StablecoinsURL = 'https://stablecoins.llama.fi'
 
 stablecoins = requests.get(StablecoinsURL + '/stablecoins/' + '?includePrices=true')
 
-print(stablecoins.json())
+# print(stablecoins.json())
 
+df = pd.DataFrame(stablecoins)
+print(df)
 
 
 
