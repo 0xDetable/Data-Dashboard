@@ -45,3 +45,9 @@ sorted_data.reset_index(drop = True, inplace = True)
 
 print(sorted_data.head(10)) # stablecoins with chains they are circulating
 
+# stable coin price
+
+stablecoin_prices = requests.get(StablecoinsURL + '/stablecoinprices')
+stablecoin_price_df = pd.DataFrame(stablecoin_prices.json())
+
+print(stablecoin_price_df)
