@@ -8,12 +8,6 @@ import json
 
 BaseURL = 'https://api.llama.fi'
 
-"""
-protocols = requests.get(BaseURL + '/protocols')
-
-print(protocols.json()[0])
-"""
-
 StablecoinsURL = 'https://stablecoins.llama.fi'
 
 stablecoins = requests.get(StablecoinsURL + '/stablecoins/' + '?includePrices=true')
@@ -62,3 +56,9 @@ stablecoin_mcaps = requests.get(StablecoinsURL + '/stablecoinchains') # gives th
 stablecoin_mcap = pd.DataFrame(stablecoin_mcaps.json())
 
 print(stablecoin_mcap)
+
+# TVL data for protocols 
+
+protocols = requests.get(BaseURL + '/protocols')
+
+print(protocols.json()[0])
