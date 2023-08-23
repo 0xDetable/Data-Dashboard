@@ -50,4 +50,7 @@ print(sorted_data.head(10)) # stablecoins with chains they are circulating
 stablecoin_prices = requests.get(StablecoinsURL + '/stablecoinprices')
 stablecoin_price_df = pd.DataFrame(stablecoin_prices.json())
 
-print(stablecoin_price_df)
+stablecoin_price_df.sort_values('date', ascending = False, inplace = True) # sort the price data recent to oldest according to unix timestamps
+stablecoin_price_df.reset_index(drop = True, inplace = True) # correct the index
+
+print(stablecoin_price_df.head(10))
