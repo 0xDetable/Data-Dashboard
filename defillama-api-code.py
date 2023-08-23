@@ -62,3 +62,16 @@ print(stablecoin_mcap)
 protocols = requests.get(BaseURL + '/protocols')
 
 print(protocols.json()[0])
+
+# Price percentage change
+
+CoinsURL = 'https://coins.llama.fi'
+
+chain_name = 'ethereum'
+contract_address = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+coins = chain_name + ':' + contract_address
+percentage = requests.get(CoinsURL + '/percentage/' + coins + '?timestamp=' + '1664364537' + '&lookForward=false' + '&period=3w')
+
+percentage_df = pd.DataFrame(percentage.json())
+
+print(percentage_df)
