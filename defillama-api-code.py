@@ -54,3 +54,11 @@ stablecoin_price_df.sort_values('date', ascending = False, inplace = True) # sor
 stablecoin_price_df.reset_index(drop = True, inplace = True) # correct the index
 
 print(stablecoin_price_df.head(10))
+
+# MCAP
+
+stablecoin_mcaps = requests.get(StablecoinsURL + '/stablecoinchains') # gives the current mcap sum of stablecoins on each chain
+
+stablecoin_mcap = pd.DataFrame(stablecoin_mcaps.json())
+
+print(stablecoin_mcap)
