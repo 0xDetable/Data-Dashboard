@@ -21,7 +21,15 @@ flattened_data = []
 for asset in pegged_assets:
     for chain, chain_data in asset["chainCirculating"].items():
         current_data = chain_data.get("current", {})  # Get current data, handle missing key
-        pegged_usd = current_data.get("peggedUSD")
+        chain_circulating = current_data.get("peggedUSD")
+        current_circulating = asset['circulating'].get("peggedUSD")
+        price = asset['price']
+
+        if price and current_circulating is not None:
+            market_cap = price * current_circulating
+        else: 
+            market_cap = None
+
         flattened_data.append({
             'asset_id': asset['id'],
             'asset_name': asset['name'],
@@ -30,11 +38,14 @@ for asset in pegged_assets:
             'pegType': asset['pegType'],
             'pegMechanism': asset['pegMechanism'],
             'chain': chain,
-            'current_peggedUSD': pegged_usd
+            'chain_circulating': chain_circulating,
+            'current_circulating': current_circulating,
+            'price': price,
+            'market_cap': market_cap
         })
 
 df = pd.DataFrame(flattened_data)
-sorted_data = df.sort_values('current_peggedUSD', ascending = False)
+sorted_data = df.sort_values('market_cap', ascending = False)
 sorted_data.reset_index(drop = True, inplace = True)
 
 print(sorted_data.head(10)) # stablecoins with chains they are circulating
