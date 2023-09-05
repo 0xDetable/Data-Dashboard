@@ -27,8 +27,10 @@ for asset in pegged_assets:
 
         if price and current_circulating is not None:
             market_cap = price * current_circulating
+            percentage_off_peg = (price - 1) * 100
         else: 
             market_cap = None
+            percentage_off_peg = None 
 
         flattened_data.append({
             'asset_id': asset['id'],
@@ -41,6 +43,7 @@ for asset in pegged_assets:
             'chain_circulating': chain_circulating,
             'current_circulating': current_circulating,
             'price': price,
+            '% Off Peg': percentage_off_peg,
             'market_cap': market_cap
         })
 
