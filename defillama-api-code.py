@@ -53,39 +53,35 @@ sorted_data.reset_index(drop = True, inplace = True)
 
 print(sorted_data.head(10)) # stablecoins with chains they are circulating
 
-# stable coin price
+CoinGecko_url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=stablecoins&order=market_cap_desc&per_page=100&page=1&sparkline=false&locale=en"
 
-stablecoin_prices = requests.get(StablecoinsURL + '/stablecoinprices')
-stablecoin_price_df = pd.DataFrame(stablecoin_prices.json())
+coingecko_stablecoins = pd.DataFrame(requests.get(CoinGecko_url).json())
 
-stablecoin_price_df.sort_values('date', ascending = False, inplace = True) # sort the price data recent to oldest according to unix timestamps
-stablecoin_price_df.reset_index(drop = True, inplace = True) # correct the index
+#print(coingecko_stablecoins.iloc[0])
 
-print(stablecoin_price_df.head(10))
+flattened_coingecko = []
 
-# MCAP
+for i in range(coingecko_stablecoins.shape[0]):
+    flattened_coingecko.append({
+        "id": coingecko_stablecoins.iloc[i]["id"],
+        "total_volume": coingecko_stablecoins.iloc[i]["total_volume"],
+        "ath": coingecko_stablecoins.iloc[i]["ath"],
+        "ath_change_percentage": coingecko_stablecoins.iloc[i]["ath_change_percentage"],
+        "ath_date": coingecko_stablecoins.iloc[i]["ath_date"],
+        "atl": coingecko_stablecoins.iloc[i]["atl"],
+        "atl_change_percentage": coingecko_stablecoins.iloc[i]["atl_change_percentage"],
+        "atl_date": coingecko_stablecoins.iloc[i]["atl_date"],
+    })
+#print(coingecko_stablecoins)
+print(pd.DataFrame(flattened_coingecko))
 
-stablecoin_mcaps = requests.get(StablecoinsURL + '/stablecoinchains') # gives the current mcap sum of stablecoins on each chain
+# Merge the two DataFrames using 'gecko_id' and 'id' columns as the key
+merged_df = pd.merge(df, pd.DataFrame(flattened_coingecko), left_on='gecko_id', right_on='id', how='inner')
 
-stablecoin_mcap = pd.DataFrame(stablecoin_mcaps.json())
+# Drop the duplicate 'id' column if needed
+merged_df.drop(columns='id', inplace=True)
 
-print(stablecoin_mcap)
+# Print or manipulate the merged DataFrame as needed
+print(merged_df)
 
-# TVL data for protocols 
-
-protocols = requests.get(BaseURL + '/protocols')
-
-print(protocols.json()[0])
-
-# Price percentage change
-
-CoinsURL = 'https://coins.llama.fi'
-
-chain_name = 'ethereum'
-contract_address = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-coins = chain_name + ':' + contract_address
-percentage = requests.get(CoinsURL + '/percentage/' + coins + '?timestamp=' + '1664364537' + '&lookForward=false' + '&period=3w')
-
-percentage_df = pd.DataFrame(percentage.json())
-
-print(percentage_df)
+merged_df.to_csv('output.csv', index=False)  # This will save the DataFrame to 'output.csv' without including the index column
