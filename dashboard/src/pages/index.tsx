@@ -1,8 +1,9 @@
 import Head from 'next/head'
-import styles from '@/styles/Home.module.css'
-import Dashboard from '@/pages/dashboard'
-import Header from '@/pages/components/Header'
-import SideMenu from '@/pages/components/SideMenu'
+import Dashboard from '@/pages/dashboard';
+import Header from '@/pages/components/Header';
+import SideMenu from '@/pages/components/SideMenu';
+import scss from './Home.module.scss';
+import React from 'react';
 
 export default function Home() {
     return (
@@ -13,8 +14,7 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={styles.main}>
-                <Header/>
+            <main className={scss.main}>
                 <Dashboard />
                 <SideMenu/>
             </main>
