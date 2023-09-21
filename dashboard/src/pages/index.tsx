@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import Dashboard from '@/pages/dashboard'
+import Header from '@/pages/components/Header'
+import SideMenu from '@/pages/components/SideMenu'
 
 export default function Home() {
     return (
@@ -12,7 +14,9 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={styles.main}>
+                <Header/>
                 <Dashboard />
+                <SideMenu/>
             </main>
         </>
     )
