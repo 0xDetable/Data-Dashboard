@@ -5,6 +5,7 @@ import { CssBaseline } from '@mui/material';
 import darkTheme from '@/theme/darkTheme';
 import lightTheme from '@/theme/lightTheme';
 import Header from '@/pages/components/Header';
+import Layout from '@/pages/components/Layout';
 
 const ColorModeContext = React.createContext({
   toggleColorMode: () => {}
@@ -41,7 +42,10 @@ const App = ({ Component, pageProps }: AppProps) => {
               <>
                   <CssBaseline/>
                   <Header ColorModeContext={ColorModeContext}/>
-                  <Component {...pageProps} />
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+
               </>
           </ThemeProvider>
       </ColorModeContext.Provider>
