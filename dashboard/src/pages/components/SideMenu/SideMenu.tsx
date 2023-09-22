@@ -61,8 +61,7 @@ const SideMenu = () => {
         setOpen(!open);
     };
 
-    const handleListItemButtonClick = (text: string) => {
-        text === null;
+    const handleListItemButtonClick = () => {
         setOpen(false);
       };
 
@@ -109,7 +108,7 @@ const SideMenu = () => {
               href={`/dashboard/${menuRouteList[index]}`}
             >
               <ListItemButton
-                onClick={() => handleListItemButtonClick(text)}
+                onClick={() => handleListItemButtonClick()}
                 title={text}
                 aria-label={text}
                 sx={{
