@@ -81,7 +81,37 @@ merged_df = pd.merge(df, pd.DataFrame(flattened_coingecko), left_on='gecko_id', 
 # Drop the duplicate 'id' column if needed
 merged_df.drop(columns='id', inplace=True)
 
-# Print or manipulate the merged DataFrame as needed
+# To find the most dominant stablecoin
+
+total_market_cap = 0
+
+unique_stablecoin_market_caps = set()
+
+# Iterate through the merged_df rows
+for index, row in merged_df.iterrows():
+    stablecoin_id = row['gecko_id']
+    market_cap = row['market_cap']
+
+    if pd.isna(market_cap):
+        market_cap = 0
+
+    # Check if the (stablecoin_id, market_cap) tuple has not been added before
+    if (stablecoin_id, market_cap) not in unique_stablecoin_market_caps:
+        total_market_cap += market_cap  # Add market_cap to the total
+        unique_stablecoin_market_caps.add((stablecoin_id, market_cap))  # Add the tuple to the set
+
+
+# Calculate the percentage of each stablecoin's market cap relative to the total market cap
+merged_df['market_cap_percentage'] = merged_df.apply(lambda row: (row['market_cap'] / total_market_cap) * 100 if row['market_cap'] is not None else 0, axis=1)
+
 print(merged_df)
 
-merged_df.to_csv('output.csv', index=False)  # This will save the DataFrame to 'output.csv' without including the index column
+merged_df.to_csv('output.csv', index=False)  
+
+# Find the stablecoin with the highest market cap percentage
+most_dominant_stablecoin = merged_df[merged_df['market_cap_percentage'] == merged_df['market_cap_percentage'].max()]
+
+# Print the most dominant stablecoin
+print("Most Dominant Stablecoin:")
+print(most_dominant_stablecoin.iloc[0][['asset_name', 'market_cap_percentage']])
+
