@@ -61,7 +61,6 @@ df = pd.DataFrame(df_data)
 
 # Drop columns so that only column remains where the stablecoin has their data with currency.
 df = df.dropna(axis=1, how='all')
-print(symbols)
 
 # Rename the columns from stablecoin_ids to symbols
 for col in df.columns:
@@ -72,3 +71,45 @@ for col in df.columns:
 
 df.to_csv("output2.csv", index = False)
 #print(df)
+
+# Part to Convert other currencies to USD
+
+# Define a function to convert market cap to USD currency using rates 
+def convert_to_usd(row, currency, rate_data, symbol):
+
+    col_name = f"{symbol}_{currency}"
+
+    # Get the latest rate
+    latest_date = max(entry["date"] for entry in rates_data_list)
+
+    rate_dict = next((entry for entry in rate_data if entry["date"] == latest_date), None)
+    
+    currency_rates = rate_dict.get('rates', {})
+
+    currency_rate = currency_rates[currency]
+    usd_rate = currency_rates['USD']
+    exchange_rate = currency_rate / usd_rate # calculate exchange rate
+
+    return row[col_name] * exchange_rate
+    
+
+# Fetch rate data from the rates API
+rate_url = 'https://stablecoins.llama.fi/rates'
+rates_response = requests.get(rate_url)
+if rates_response.status_code == 200:
+    rates_data_list = rates_response.json()
+else:
+    print("Failed to retrieve rates data.")
+    rates_data_list = []
+
+for col in df.columns:
+    if col!= "Date" and "_" in col:
+        symbol = col.split("_")[0]
+        currency = col.split("_")[1]
+        if currency != 'USD' and currency != 'VAR':
+            df[col] = df.apply(lambda row: convert_to_usd(row, currency, rates_data_list, symbol), axis=1)
+            new_col_name = f"{symbol}_USD"
+            df = df.rename(columns={col: new_col_name})
+
+df.to_csv("output2_with_usd.csv", index=False)
+
