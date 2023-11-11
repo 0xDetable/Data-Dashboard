@@ -17,7 +17,7 @@ stablecoins = requests.get(StablecoinsURL + '/stablecoins/' + '?includePrices=tr
 pegged_assets = stablecoins.json()['peggedAssets']
 
 flattened_data = []
-
+"""
 for asset in pegged_assets:
     for chain, chain_data in asset["chainCirculating"].items():
         current_data = chain_data.get("current", {})  # Get current data, handle missing key
@@ -27,7 +27,7 @@ for asset in pegged_assets:
 
         if price and current_circulating is not None:
             market_cap = price * current_circulating
-            percentage_off_peg = (price - 1) * 100
+            percentage_off_peg = (price - 1) # * 100
         else: 
             market_cap = None
             percentage_off_peg = None 
@@ -46,6 +46,32 @@ for asset in pegged_assets:
             '% Off Peg': percentage_off_peg,
             'market_cap': market_cap
         })
+"""
+
+for asset in pegged_assets:
+    
+    current_circulating = asset['circulating'].get("peggedUSD")
+    price = asset['price']
+
+    if price and current_circulating is not None:
+        market_cap = price * current_circulating
+        percentage_off_peg = (price - 1) # * 100
+    else: 
+        market_cap = None
+        percentage_off_peg = None 
+
+    flattened_data.append({
+        'asset_id': asset['id'],
+        'asset_name': asset['name'],
+        'symbol': asset['symbol'],
+        'gecko_id': asset['gecko_id'],
+        'pegType': asset['pegType'],
+        'pegMechanism': asset['pegMechanism'],
+        'current_circulating': current_circulating,
+        'price': price,
+        '% Off Peg': percentage_off_peg,
+        'market_cap': market_cap
+    })
 
 df = pd.DataFrame(flattened_data)
 sorted_data = df.sort_values('market_cap', ascending = False)
@@ -102,7 +128,8 @@ for index, row in merged_df.iterrows():
 
 
 # Calculate the percentage of each stablecoin's market cap relative to the total market cap
-merged_df['market_cap_percentage'] = merged_df.apply(lambda row: (row['market_cap'] / total_market_cap) * 100 if row['market_cap'] is not None else 0, axis=1)
+merged_df['market_cap_percentage'] = merged_df.apply(lambda row: (row['market_cap'] / total_market_cap) if row['market_cap'] is not None else 0, axis=1)
+# merged_df.apply(lambda row: (row['market_cap'] / total_market_cap) * 100 if row['market_cap'] is not None else 0, axis=1)
 
 print(merged_df)
 
@@ -112,6 +139,6 @@ merged_df.to_csv('output.csv', index=False)
 most_dominant_stablecoin = merged_df[merged_df['market_cap_percentage'] == merged_df['market_cap_percentage'].max()]
 
 # Print the most dominant stablecoin
-print("Most Dominant Stablecoin:")
-print(most_dominant_stablecoin.iloc[0][['asset_name', 'market_cap_percentage']])
+# print("Most Dominant Stablecoin:")
+most_dominant_stablecoin = most_dominant_stablecoin.iloc[0][['asset_name', 'market_cap_percentage']].to_csv("most_dominant.csv", index = False)
 
