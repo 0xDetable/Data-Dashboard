@@ -83,8 +83,12 @@ interface DataRow {
   asset_id: number;
   asset_name: string;
   symbol: string;
-  gecko_id: number;
   price: number;
+  off_peg: number;
+  market_cap: number;
+  market_cap_percentage: number;
+  pegType: string;
+  pegMechanism: string;
 }
 
 const columns: TableColumn<DataRow>[] = [
@@ -104,14 +108,34 @@ const columns: TableColumn<DataRow>[] = [
     sortable: false
   },
   {
-    name: "Gecko ID",
-    selector: row => row.gecko_id,
-    sortable: false
-  },
-  {
     name: "Price",
     selector: row => row.price,
     sortable: true
+  },
+  {
+    name: "% Off Peg",
+    selector: row => (row.off_peg * 100).toLocaleString() + '%',
+    sortable: true
+  },
+  {
+    name: "MarketCap",
+    selector: row => row.market_cap,
+    sortable: true
+  },
+  {
+    name: "MarketCap Percentage",
+    selector: row => (row.market_cap_percentage * 100).toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%',
+    sortable: true
+  },
+  {
+    name: "Peg Type",
+    selector: row => row.pegType,
+    sortable: false
+  },
+  {
+    name: "Peg Mechanism",
+    selector: row => row.pegMechanism,
+    sortable: false
   }
 ];
 
@@ -130,9 +154,14 @@ const Data = () => {
           const filteredData = parsedData.map(row => ({
             asset_id: row.asset_id,
             asset_name: row.asset_name,
-            gecko_id: row.gecko_id,
             symbol: row.symbol,
             price: row.price,
+            off_peg: row.off_peg,
+            market_cap: row.market_cap,
+            market_cap_percentage: row.market_cap_percentage,
+            pegType: row.pegType,
+            pegMechanism: row.pegMechanism,
+
           }));
   
           setCsvData(filteredData);

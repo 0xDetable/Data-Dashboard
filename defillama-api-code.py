@@ -43,7 +43,7 @@ for asset in pegged_assets:
             'chain_circulating': chain_circulating,
             'current_circulating': current_circulating,
             'price': price,
-            '% Off Peg': percentage_off_peg,
+            'off_peg': percentage_off_peg,
             'market_cap': market_cap
         })
 """
@@ -69,7 +69,7 @@ for asset in pegged_assets:
         'pegMechanism': asset['pegMechanism'],
         'current_circulating': current_circulating,
         'price': price,
-        '% Off Peg': percentage_off_peg,
+        'off_peg': percentage_off_peg,
         'market_cap': market_cap
     })
 
